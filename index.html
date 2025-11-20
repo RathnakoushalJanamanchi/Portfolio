@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Portfolio of Janamanchi Rathna Koushal - VLSI Engineer">
+  
+  <!-- Fonts & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Updated Fonts: Orbitron (Tech), Space Grotesk (Body), Syncopate (Headers) -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+
+  <title>Janamanchi Rathna Koushal | VLSI Engineer</title>
+
+  <style>
+    /* --- VARIABLES & RESET --- */
+    :root {
+        --primary-bg: #020202; /* Silicon Black */
+        --card-bg: rgba(10, 15, 20, 0.7);
+        --accent-color: #00f2ff; /* Electric Cyan */
+        --accent-secondary: #0066ff; /* Deep Blue */
+        --circuit-color: rgba(0, 242, 255, 0.15);
+        --text-main: #ffffff;
+        --text-muted: #a0a0a0;
+        --font-heading: 'Syncopate', sans-serif;
+        --font-tech: 'Orbitron', sans-serif;
+        --font-body: 'Space Grotesk', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; cursor: none; /* Custom cursor */ }
+    
+    body { 
+        background-color: var(--primary-bg); 
+        color: var(--text-main); 
+        font-family: var(--font-body);
+        overflow-x: hidden;
+        position: relative;
+        /* VLSI Grid Background */
+        background-image: 
+            linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 4px; }
+
+    /* Scroll Progress Bar */
+    .scroll-progress {
+        position: fixed; top: 0; left: 0; width: 0%; height: 3px;
+        background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
+        z-index: 1000;
+        transition: width 0.1s;
+        box-shadow: 0 0 10px var(--accent-color);
+    }
+
+    a { text-decoration: none; color: inherit; transition: 0.3s; }
+    ul { list-style: none; }
+
+    /* --- CUSTOM CURSOR --- */
+    .cursor-dot, .cursor-outline {
+        position: fixed; top: 0; left: 0;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        z-index: 9999;
+        pointer-events: none;
+    }
+    .cursor-dot { width: 6px; height: 6px; background-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-color); }
+    .cursor-outline {
+        width: 40px; height: 40px;
+        border: 1px solid rgba(0, 242, 255, 0.3);
+        transition: width 0.2s, height 0.2s, background-color 0.2s;
+    }
+    body.hovering .cursor-outline {
+        width: 60px; height: 60px;
+        background-color: rgba(0, 242, 255, 0.05);
+        border-color: var(--accent-color);
+        border-radius: 10px; /* Square up slightly for chip feel */
+    }
+
+    /* --- ANIMATED BACKGROUND --- */
+    #canvas-container {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1; opacity: 1; pointer-events: none;
+    }
+
+    /* --- LAYOUT UTILS --- */
+    .section__container { max-width: 1400px; margin: auto; padding: 8rem 2rem; position: relative; }
+    
+    /* --- TYPOGRAPHY --- */
+    .section__title { 
+        font-family: var(--font-heading);
+        font-size: clamp(2rem, 5vw, 3.5rem); 
+        font-weight: 700;
+        margin-bottom: 3rem; 
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: -1px;
+        position: relative;
+        text-align: center;
+    }
+    
+    .section__title span { 
+        background: linear-gradient(to right, var(--accent-color), #fff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .section__subtitle { 
+        font-family: var(--font-tech);
+        color: var(--accent-color); 
+        margin-bottom: 1rem; 
+        font-size: 0.9rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        display: block;
+        text-align: center;
+        opacity: 0.8;
+    }
+
+    /* --- NAVIGATION --- */
+    nav { 
+        position: fixed; top: 0; width: 100%; z-index: 100; 
+        padding: 1.5rem 3rem; 
+        display: flex; justify-content: space-between; align-items: center;
+        background: rgba(2, 2, 2, 0.8);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+    }
+
+    .nav__logo a { 
+        font-family: var(--font-tech);
+        font-size: 1.2rem; 
+        font-weight: 700; 
+        color: #fff; 
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        display: flex; align-items: center; gap: 10px;
+    }
+    .nav__logo span { color: var(--accent-color); }
+
+    /* --- HERO SECTION (CENTERED) --- */
+    .header__container { 
+        min-height: 100vh; 
+        display: flex; flex-direction: column; 
+        justify-content: center; align-items: center;
+        text-align: center; 
+        padding-top: 4rem;
+    }
+    
+    /* Typewriter H1 */
+    .typewriter-h1 {
+        font-family: var(--font-heading);
+        font-size: clamp(2.5rem, 6vw, 5rem);
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: -2px;
+        position: relative;
+    }
+    
+    .header__role {
+        font-size: clamp(1.2rem, 3vw, 2rem);
+        color: var(--text-muted);
+        font-weight: 300;
+        margin-bottom: 2rem;
+        font-family: var(--font-tech);
+        letter-spacing: 2px;
+    }
+    .header__role span { color: var(--accent-color); font-weight: 600; text-shadow: 0 0 10px rgba(0,242,255,0.3); }
+
+    .header__description {
+        max-width: 700px;
+        margin-bottom: 3rem;
+        line-height: 1.8;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        position: relative;
+    }
+
+    /* --- MAGNETIC BUTTONS --- */
+    .action__btns { display: flex; gap: 2rem; align-items: center; justify-content: center; }
+    
+    .btn { 
+        padding: 1rem 3rem; 
+        background: transparent;
+        color: var(--accent-color); 
+        border: 1px solid var(--accent-color);
+        font-family: var(--font-tech);
+        font-weight: 700; 
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        position: relative;
+        overflow: hidden;
+        transition: 0.3s;
+        z-index: 1;
+        clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); /* Chip corner cut */
+    }
+    
+    .btn::before {
+        content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%;
+        background: var(--accent-color); z-index: -1; transition: 0.3s ease;
+    }
+    .btn:hover { color: #000; box-shadow: 0 0 30px rgba(0, 242, 255, 0.3); }
+    .btn:hover::before { width: 100%; }
+    
+    .video-btn {
+        display: flex; align-items: center; gap: 15px; color: #fff; cursor: none;
+    }
+    .play-icon {
+        width: 50px; height: 50px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.2);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem;
+        color: #fff;
+        transition: 0.4s;
+    }
+    .video-btn:hover .play-icon { 
+        border-color: var(--accent-color); color: var(--accent-color); transform: scale(1.1);
+    }
+
+    /* --- ABOUT SECTION --- */
+    .about__container { display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center; text-align: center; }
+    
+    .profile-wrapper {
+        position: relative;
+        width: 300px; height: 300px;
+        margin: auto;
+        border-radius: 50%;
+        padding: 5px;
+        background: linear-gradient(135deg, #1a1a1a 0%, var(--accent-color) 50%, #1a1a1a 100%);
+        box-shadow: 0 0 40px rgba(0, 242, 255, 0.15);
+    }
+    
+    .profile-img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        background: #000;
+        border: 4px solid #020202;
+        filter: grayscale(100%);
+        transition: 0.5s;
+    }
+    
+    .profile-wrapper:hover .profile-img { filter: grayscale(0%); }
+
+    .about__details { 
+        font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin: 2rem auto; max-width: 800px;
+    }
+
+    /* --- SPOTLIGHT CARDS (Layout Style) --- */
+    .project__grid, .service__grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+        gap: 2rem; margin-top: 3rem; 
+    }
+    
+    .spotlight-card {
+        background: var(--card-bg);
+        border: 1px solid rgba(0, 242, 255, 0.1);
+        border-radius: 8px; /* Slightly sharper for tech feel */
+        padding: 2.5rem;
+        position: relative;
+        overflow: hidden;
+        transition: 0.3s;
+        display: flex; flex-direction: column; align-items: flex-start; text-align: left;
+        height: 100%;
+    }
+    
+    /* Circuit Pattern on Cards */
+    .spotlight-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: radial-gradient(rgba(0, 242, 255, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0;
+        transition: 0.3s;
+        pointer-events: none;
+    }
+    .spotlight-card:hover::before { opacity: 1; }
+
+    /* Glowing Border Effect */
+    .spotlight-card::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        border-radius: 8px;
+        padding: 1px;
+        background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), var(--accent-color), transparent 40%);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.5s;
+        pointer-events: none;
+        z-index: 2;
+    }
+    .spotlight-card:hover::after { opacity: 1; }
+
+    .spotlight-card > * { position: relative; z-index: 3; }
+
+    .card-icon {
+        font-size: 2rem; color: var(--accent-color); margin-bottom: 1.5rem;
+        background: rgba(0, 242, 255, 0.05); padding: 12px; border-radius: 4px;
+        border: 1px solid rgba(0, 242, 255, 0.2);
+    }
+    
+    .spotlight-card h4 {
+        font-family: var(--font-tech); font-size: 1.2rem; color: #fff; margin-bottom: 0.8rem;
+    }
+    .spotlight-card p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; flex-grow: 1; }
+    
+    .card-meta {
+        width: 100%; margin-top: 1.5rem; padding-top: 1rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        display: flex; justify-content: space-between;
+        color: var(--accent-color); font-size: 0.8rem; font-family: var(--font-tech);
+    }
+
+    /* --- STATS ROW --- */
+    .stats-row {
+        display: flex; justify-content: center; gap: 4rem; margin-top: 3rem; flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; }
+    .stat-item h3 { font-family: var(--font-heading); font-size: 2.5rem; color: #fff; text-shadow: 0 0 15px rgba(0,242,255,0.3); }
+    .stat-item p { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+
+    /* --- FOOTER --- */
+    .footer__container { margin-top: 8rem; padding-top: 4rem; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
+    
+    .footer-content { max-width: 800px; margin: auto; }
+    .footer h2 { font-family: var(--font-heading); font-size: 2.5rem; margin-bottom: 2rem; color: #fff; }
+    
+    .social__icons { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; }
+    .social__icons a { 
+        font-size: 1.5rem; color: #fff; transition: 0.3s;
+    }
+    .social__icons a:hover { color: var(--accent-color); transform: scale(1.2); text-shadow: 0 0 10px var(--accent-color); }
+
+    .footer__form { max-width: 500px; margin: auto; display: flex; flex-direction: column; gap: 1rem; }
+    input, textarea {
+        width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+        padding: 1rem; color: #fff; font-family: var(--font-body); outline: none; transition: 0.3s; border-radius: 5px;
+    }
+    input:focus, textarea:focus { border-color: var(--accent-color); box-shadow: 0 0 15px rgba(0,242,255,0.1); }
+
+    /* --- ANIMATIONS --- */
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 768px) {
+        .section__title { font-size: 2rem; }
+        .typewriter-h1 { font-size: 2.2rem; }
+        .stats-row { gap: 2rem; }
+        .cursor-dot, .cursor-outline { display: none; }
+        * { cursor: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress"></div>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot"></div>
+<div class="cursor-outline"></div>
+
+<!-- Circuit Canvas Background -->
+<canvas id="canvas-container"></canvas>
+
+<nav>
+  <div class="nav__logo hover-trigger"><a href="#"><i class="ri-cpu-line"></i> JR<span>K</span></a></div>
+  <a href="mailto:koushaljanamanchi2525@gmail.com" class="hover-trigger" style="font-size: 1.2rem; color: #fff;">Connect</a>
+</nav>
+
+<header>
+  <div class="section__container header__container">
+    
+    <!-- Typewriter H1 -->
+    <h1 class="typewriter-h1 hover-trigger" id="typewriter-target"></h1>
+    
+    <h2 class="header__role reveal">VLSI <span>Engineer</span> & <span style="opacity: 0.8">SoC Designer</span></h2>
+    
+    <p class="header__description reveal">
+        Architecting the nanoscale. 
+        Specializing in System-on-Chip Design, CMOS Architectures, and Digital ICs with a focus on power efficiency, scalability, and physical design.
+    </p>
+    
+    <div class="action__btns reveal">
+      <a href="#contact" class="btn hover-trigger magnetic-btn">Initiate Contact</a>
+      <a class="video-btn hover-trigger magnetic-btn" href="#project">
+        <div class="play-icon"><i class="ri-arrow-down-line"></i></div>
+        <span>View Projects</span>
+      </a>
+    </div>
+
+    <div class="stats-row reveal">
+        <div class="stat-item">
+            <h3 class="counter" data-target="9.60">0</h3>
+            <p>CGPA</p>
+        </div>
+        <div class="stat-item">
+            <h3 class="counter" data-target="2">0</h3>
+            <p>Patents</p>
+        </div>
+        <div class="stat-item">
+            <h3 class="counter" data-target="5">0</h3>
+            <p>Projects</p>
+        </div>
+    </div>
+  </div>
+</header>
+
+<section class="about" id="about">
+  <div class="section__container about__container">
+    <div class="profile-wrapper hover-trigger reveal">
+        <img src="assets/profile.png" onerror="this.src='https://ui-avatars.com/api/?name=JK&background=050505&color=fff&size=400&font-size=0.3'" alt="Profile" class="profile-img"/>
+    </div>
+    
+    <div class="reveal">
+      <span class="section__subtitle">Biography</span>
+      <h2 class="section__title">Engineered For <span>Excellence</span></h2>
+      <div class="about__details">
+        I am an Electronics and Communication Engineering student specializing in VLSI Design, deeply committed to advancing technology through innovative design. My expertise lies in creating efficient and reliable circuits that drive modern electronics. With hands-on research experience from <strong>NIT Warangal</strong> and <strong>IIT Hyderabad</strong>, I optimize performance in semiconductor technology.
+      </div>
+      <a href="#education" class="btn hover-trigger magnetic-btn" style="border-color: #fff; color: #fff;">View Academic Log</a>
+    </div>
+  </div>
+</section>
+
+<!-- Education Section -->
+<section id="education">
+  <div class="section__container">
+    <span class="section__subtitle">Academic Log</span>
+    <h2 class="section__title">Edu<span>cation</span></h2>
+    <div class="project__grid" id="education-grid">
+      <a href="https://drive.google.com/file/d/1l2OGTrChYx5YKo2e8kx9hQd_t90EUiH3/view?usp=sharing" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-book-mark-line"></i></div>
+        <h4>SR University, Warangal</h4>
+        <p>B.Tech in ECE, VLSI Specialization</p>
+        <div class="card-meta">
+            <span>2023-Present</span>
+            <span>9.60 CGPA</span>
+        </div>
+      </a>
+      <div class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-building-4-line"></i></div>
+        <h4>Narayana Junior College</h4>
+        <p>Intermediate Education</p>
+        <div class="card-meta">
+            <span>2021-2023</span>
+            <span>85.3%</span>
+        </div>
+      </div>
+      <div class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-school-line"></i></div>
+        <h4>St. Anthony’s High School</h4>
+        <p>Secondary Education</p>
+        <div class="card-meta">
+            <span>2021</span>
+            <span>10.00 CGPA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills Section -->
+<section class="service" id="skills">
+  <div class="section__container">
+    <span class="section__subtitle">Capabilities</span>
+    <h2 class="section__title">Technical <span>Arsenal</span></h2>
+    <div class="service__grid">
+      <div class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-code-s-slash-line"></i></div>
+        <h4>Programming</h4>
+        <p>Python, C, Verilog, MATLAB</p>
+      </div>
+      <div class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-cpu-line"></i></div>
+        <h4>EDA Tools</h4>
+        <p>HSPICE, Synopsys Sentaurus TCAD, AWR DE, LTspice, NI LabVIEW, Cadence Virtuoso</p>
+      </div>
+      <div class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-microscope-line"></i></div>
+        <h4>Core Domains</h4>
+        <p>Digital IC Design, CMOS, SoC, ASIC, Analog Analysis, Nanoscale Devices, DSP</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Projects Section -->
+<section id="project">
+  <div class="section__container">
+    <span class="section__subtitle">Portfolio</span>
+    <h2 class="section__title">Selected <span>Works</span></h2>
+    <div class="project__grid">
+      <a href="https://github.com/Koushal1234567890/vehicle-tracking" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-eye-2-line"></i></div>
+        <h4>AI Vehicle Tracking</h4>
+        <p>Enhancing road safety using computer vision.</p>
+        <div class="card-meta"><span>Python</span> <span>OpenCV</span></div>
+      </a>
+      <a href="#" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-robot-2-line"></i></div>
+        <h4>Robotic Vacuum Cleaner</h4>
+        <p>Green India initiative automated cleaning solution.</p>
+        <div class="card-meta"><span>IoT</span> <span>Embedded</span></div>
+      </a>
+      <a href="#" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-plane-line"></i></div>
+        <h4>Line Follower Drone</h4>
+        <p>MATLAB Simulink based autonomous drug delivery.</p>
+        <div class="card-meta"><span>MATLAB</span> <span>Simulink</span></div>
+      </a>
+      <a href="#" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-charging-pile-2-line"></i></div>
+        <h4>Hybrid EV</h4>
+        <p>Promoting renewable energy (with IIT Bombay).</p>
+        <div class="card-meta"><span>Power</span> <span>Auto</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Certifications Section -->
+<section class="certifications">
+  <div class="section__container">
+    <span class="section__subtitle">Verified</span>
+    <h2 class="section__title">Certifi<span>cations</span></h2>
+    <div class="project__grid">
+      <a href="https://matlabacademy.mathworks.com/progress/share/certificate.html?id=16351647-9193-43a5-92bd-e3665b2855bb" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-medal-line"></i></div>
+        <h4>MATLAB Onramp</h4>
+        <p>Fundamentals of algorithmic programming.</p>
+      </a>
+      <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_vlsi-semiconductor-fpga-activity-7256943264770007041-4slh" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-award-line"></i></div>
+        <h4>VLSI for Beginners</h4>
+        <p>NIELIT Certification.</p>
+      </a>
+      <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_embedded-system-design-activity-7276903322911973377-fFAX/" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-cpu-line"></i></div>
+        <h4>Embedded Systems</h4>
+        <p>Maven Silicon.</p>
+      </a>
+      <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_risc-v-processor-rv32i-base-isa-activity-7286431725725892610-N9fV/" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-microchip-line"></i></div>
+        <h4>RISC-V Processor</h4>
+        <p>RV32I Base ISA - Maven Silicon.</p>
+      </a>
+      <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_vlsi-system-on-chip-design-activity-7276666603927154688-FAIo" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-equalizer-line"></i></div>
+        <h4>VLSI SoC Design</h4>
+        <p>System on Chip Architecture - Maven Silicon.</p>
+      </a>
+      <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_allegro-x-advanced-package-designer-activity-7299421598984376320-wZOC/" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-file-paper-2-line"></i></div>
+        <h4>Cadence Allegro X</h4>
+        <p>Advanced Package Designer.</p>
+      </a>
+      <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_allegro-sigrity-package-assessment-and-model-activity-7299456642373365760-GhVv/" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-file-search-line"></i></div>
+        <h4>Cadence Sigrity</h4>
+        <p>Package Assessment.</p>
+      </a>
+      <a href="https://drive.google.com/drive/u/0/folders/1xmMp8RjHHaNPMpE4FaJI16ru3qYSJr90" target="_blank" class="spotlight-card hover-trigger reveal">
+        <div class="card-icon"><i class="ri-folder-open-line"></i></div>
+        <h4>View All</h4>
+        <p>Full Verification Repository.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Internships Section -->
+<section id="internships">
+    <div class="section__container">
+        <span class="section__subtitle">Experience</span>
+        <h2 class="section__title">Inter<span>nships</span></h2>
+        <div class="project__grid">
+            <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_summer-internship-iit-hyderabad-activity-7351916345917140993-nvM3" target="_blank" class="spotlight-card hover-trigger reveal">
+                <div class="card-icon"><i class="ri-flask-line"></i></div>
+                <h4>IIT Hyderabad</h4>
+                <p>Research Internship - Magnetic characterizations of Permalloy devices for MRAM.</p>
+                <div class="card-meta"><span>Guide: Dr. Chandrasekhar Muarpaka</span></div>
+            </a>
+            <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_throwback-internshipexperience-quantumai-activity-7357984325314777088-IBVn" target="_blank" class="spotlight-card hover-trigger reveal">
+                <div class="card-icon"><i class="ri-brain-line"></i></div>
+                <h4>NIT Warangal</h4>
+                <p>Research Internship - Deep learning AI model with quantum memory attention network.</p>
+                <div class="card-meta"><span>Guide: Dr. Ilaiah Kavati</span></div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Publications Section -->
+<section id="publications">
+    <div class="section__container">
+        <span class="section__subtitle">Research</span>
+        <h2 class="section__title">Publica<span>tions</span></h2>
+        <div class="project__grid">
+            <a href="https://ieeexplore.ieee.org/abstract/document/11012207" class="spotlight-card hover-trigger reveal">
+                <div class="card-icon"><i class="ri-article-line"></i></div>
+                <h4>IEEE DevIC Pub</h4>
+                <p>Reliability Study of Nano Scale Baugh Wooley Multiplier</p>
+            </a>
+             <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_19883jrathnakoushal16thicccnt2025-activity-7355619528535412738-iu9R" class="spotlight-card hover-trigger reveal">
+                <div class="card-icon"><i class="ri-article-line"></i></div>
+                <h4>ICCCNT IIT Indore</h4>
+                <p>Pre-Amplifier Based Nanoscale Cross Coupled Dynamic Voltage Comparator</p>
+            </a>
+            <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_patent-1-activity-7334214596989198336-FYe4" class="spotlight-card hover-trigger reveal">
+                <div class="card-icon"><i class="ri-patent-line"></i></div>
+                <h4>Patent Grant</h4>
+                <p>Hybrid Carbon Nanotube and CMOS VLSI Processor</p>
+            </a>
+            <a href="https://www.linkedin.com/posts/rathna-koushal-janamanchi_picofet-ultra-low-power-vlsi-for-next-gen-activity-7368525261291614208-N4kB" class="spotlight-card hover-trigger reveal">
+                <div class="card-icon"><i class="ri-patent-line"></i></div>
+                <h4>Patent Grant</h4>
+                <p>PicoFET-Ultra low power VLSI for Next gen electronics</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer id="contact">
+  <div class="section__container footer__container">
+    <div class="footer-content">
+      <h2>Let's Build the <span>Future</span></h2>
+      <p style="color: var(--text-muted);">Ready to collaborate? Send a signal.</p>
+      
+      <div class="social__icons">
+        <a href="mailto:koushaljanamanchi2525@gmail.com" class="hover-trigger"><i class="ri-mail-line"></i></a>
+        <a href="https://www.linkedin.com/in/rathna-koushal-janamanchi/" target="_blank" class="hover-trigger"><i class="ri-linkedin-fill"></i></a>
+        <a href="https://github.com/Koushal1234567890" target="_blank" class="hover-trigger"><i class="ri-github-fill"></i></a>
+      </div>
+
+      <form class="footer__form" action="https://formspree.io/f/meolqrbn" method="POST">
+        <input type="text" name="name" placeholder="Name" required class="hover-trigger"/>
+        <input type="email" name="email" placeholder="Email" required class="hover-trigger"/>
+        <textarea name="message" rows="3" placeholder="Project Details" required class="hover-trigger"></textarea>
+        <button class="btn hover-trigger magnetic-btn" type="submit" style="background: var(--accent-color); color: #000; border: none; width: 100%;">Transmit</button>
+      </form>
+    </div>
+    <p style="margin-top: 4rem; color: var(--text-muted); font-size: 0.8rem;">© 2024 Janamanchi Rathna Koushal. All Systems Operational.</p>
+  </div>
+</footer>
+
+<script>
+  // --- 1. MANHATTAN / ORTHOGONAL PARTICLE ANIMATION ---
+  const canvas = document.getElementById('canvas-container');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let particles = [];
+
+  // Class definition FIRST
+  class Particle {
+    constructor() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.vx = (Math.random() - 0.5) * 0.3; // Very slow drift
+      this.vy = (Math.random() - 0.5) * 0.3;
+      this.size = Math.random() * 1.5 + 0.5;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.x < 0 || this.x > width) this.vx *= -1;
+      if (this.y < 0 || this.y > height) this.vy *= -1;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 242, 255, 0.5)';
+      ctx.fill();
+    }
+  }
+
+  // Helper functions NEXT
+  function initParticles() {
+    particles = [];
+    const count = window.innerWidth < 768 ? 30 : 60;
+    for (let i = 0; i < count; i++) particles.push(new Particle());
+  }
+
+  function resize() { 
+      width = canvas.width = window.innerWidth; 
+      height = canvas.height = window.innerHeight; 
+      initParticles();
+  }
+
+  function animateCanvas() {
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw Connections first
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < particles.length; i++) {
+      let p1 = particles[i];
+      // Update positions
+      p1.update();
+      p1.draw();
+      
+      // Connect to nearby particles with Manhattan lines
+      for (let j = i + 1; j < particles.length; j++) {
+        let p2 = particles[j];
+        let dx = p1.x - p2.x;
+        let dy = p1.y - p2.y;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        
+        if (dist < 150) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0, 242, 255, ${1 - dist/150})`;
+          
+          // Draw L-shape (Manhattan routing)
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p1.y); // Horizontal segment
+          ctx.lineTo(p2.x, p2.y); // Vertical segment
+          ctx.stroke();
+        }
+      }
+    }
+    
+    requestAnimationFrame(animateCanvas);
+  }
+
+  // Execution/Listeners LAST
+  window.addEventListener('resize', resize);
+  resize();
+  animateCanvas();
+
+
+  // --- 2. CUSTOM CURSOR & MAGNETIC BUTTONS ---
+  const cursorDot = document.querySelector('.cursor-dot');
+  const cursorOutline = document.querySelector('.cursor-outline');
+  
+  window.addEventListener("mousemove", (e) => {
+      const posX = e.clientX;
+      const posY = e.clientY;
+      
+      cursorDot.style.left = `${posX}px`;
+      cursorDot.style.top = `${posY}px`;
+      
+      cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
+      
+      document.querySelectorAll('.spotlight-card').forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+      });
+  });
+
+  document.querySelectorAll('.magnetic-btn').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+          btn.style.transform = 'translate(0px, 0px)';
+      });
+  });
+
+  document.querySelectorAll('.hover-trigger').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+
+  // --- 3. TYPEWRITER EFFECT ---
+  const titleText = "Janamanchi Rathna Koushal";
+  const titleElement = document.getElementById('typewriter-target');
+  
+  function typeWriter(text, i) {
+    if (i < text.length) {
+      titleElement.innerHTML = text.substring(0, i+1) + '<span aria-hidden="true"></span>';
+      setTimeout(() => typeWriter(text, i + 1), 80);
+    }
+  }
+  setTimeout(() => typeWriter(titleText, 0), 500);
+
+  // --- 4. SCROLL PROGRESS & REVEAL ---
+  const progressBar = document.querySelector('.scroll-progress');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("active");
+        const counters = entry.target.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            const inc = target / 50;
+            let count = 0;
+            const updateCount = () => {
+                count += inc;
+                if (count < target) {
+                    counter.innerText = Math.ceil(count);
+                    if(target % 1 !== 0) counter.innerText = count.toFixed(2); 
+                    setTimeout(updateCount, 30);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            updateCount();
+        });
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+  
+  window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      progressBar.style.width = scrolled + "%";
+  });
+</script>
+</body>
+</html>
